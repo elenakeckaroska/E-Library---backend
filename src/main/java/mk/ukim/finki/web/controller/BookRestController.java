@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/books")
 public class BookRestController {
     private final BookService bookService;
@@ -19,11 +20,17 @@ public class BookRestController {
         this.bookService = bookService;
     }
 
-    @GetMapping("/")
-    public List<Book> getAllBooks(Pageable pageable){
-        return bookService.listBooksPaginated(pageable).getContent();
+    @GetMapping
+    public List<Book> getAllBooks(){
+        return bookService.listBooks();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id){
+        return this.bookService.findById(id)
+                .map(book -> ResponseEntity.ok(book))
+                .orElseGet(()->ResponseEntity.badRequest().build());
+    }
     @PostMapping("/add")
     public ResponseEntity<Book> addNewBook(@RequestBody BookDto bookDto){
         return this.bookService.create(bookDto)
@@ -42,13 +49,13 @@ public class BookRestController {
 
     @PutMapping("/edit/{id}")
     public ResponseEntity<Book> editBook(@PathVariable Long id, @RequestBody BookDto bookDto){
-        return this.bookService.create(bookDto)
+        return this.bookService.update(id, bookDto)
                 .map(book -> ResponseEntity.ok().body(book))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
 
     }
 
-    @PutMapping("borrow/{id}")
+    @PutMapping("/borrow/{id}")
     public ResponseEntity<Book> borrowBook(@PathVariable Long id){
         return this.bookService.borrow(id)
                 .map(book -> ResponseEntity.ok().body(book))

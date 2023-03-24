@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/authors")
 public class AuthorController {
 
@@ -19,7 +20,7 @@ public class AuthorController {
         this.authorService = authorService;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<Author> getAll(){
         return this.authorService.findAll();
     }
