@@ -5,6 +5,7 @@ import mk.ukim.finki.exceptions.BookNotFoundException;
 import mk.ukim.finki.models.Author;
 import mk.ukim.finki.models.Book;
 import mk.ukim.finki.models.dto.BookDto;
+import mk.ukim.finki.models.enumerations.BookCategory;
 import mk.ukim.finki.repository.AuthorRepository;
 import mk.ukim.finki.repository.BookRepository;
 import mk.ukim.finki.service.BookService;
@@ -59,9 +60,10 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new AuthorNotFoundException(bookDto.getAuthor()));
 
         book.setName(bookDto.getName());
-        book.setBookCategory(bookDto.getCategory());
-        book.setAvailableCopies(bookDto.getAvailableCopies());
+        book.setBookCategory(BookCategory.valueOf(bookDto.getCategory().toString()));
         book.setAuthor(author);
+        book.setAvailableCopies(bookDto.getAvailableCopies());
+
 
         return Optional.of(bookRepository.save(book));
     }
